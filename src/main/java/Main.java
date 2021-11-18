@@ -5,5 +5,6 @@ public class Main {
 
         Player player = new Player();
         player.play("C D E F G A B A A A A A");
+        System.out.println("proba");
     }
 }
