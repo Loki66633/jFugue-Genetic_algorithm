@@ -1,12 +1,16 @@
+import java.util.Objects;
+
 public class Kromosom {
     private int size;
     private int ff;
-    private char[] note;
+    private String note;
+    public int age;
 
-    public Kromosom(char[] note, int size, int ff) {
+    public Kromosom(String note, int size, int ff) {
         this.note=note;
         this.size = size;
         this.ff = ff;
+        this.age = 0;
     }
 
 
@@ -30,10 +34,23 @@ public class Kromosom {
     }
 
     public char[] getNote() {
-        return note;
+        return note.toCharArray();
     }
 
-    public void setNote(char[] note) {
+    public void setNote(String note) {
         this.note = note;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Kromosom kromosom = (Kromosom) o;
+        return Objects.equals(note, kromosom.note);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(note);
     }
 }
