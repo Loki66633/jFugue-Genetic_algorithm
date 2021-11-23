@@ -49,9 +49,10 @@ public class Main {
 
             //Ako smo našli rjesenje
             if (kromosoms.get(0).getFf() == FIELD_SIZE) {
-                System.out.println("RIJEŠENJE NAĐENO U "+(c+1)+". GENERACIJI");
+                System.out.println("-------------------------------------\nRIJEŠENJE NAĐENO U "+(c+1)+". GENERACIJI");
+                System.out.print("[");
                 printKromosom(kromosoms.get(0).getNote());
-                System.out.println("FF:" + kromosoms.get(0).getFf());
+                System.out.println("\nFF:" + kromosoms.get(0).getFf());
                 System.exit(0);
             }
 
@@ -69,9 +70,10 @@ public class Main {
 
 
             c++;
-            //System.out.print("FF: " + kromosoms.get(0).getFf() + " ");
-            //System.out.print("Populacija: " + kromosoms.size() + " ");
-            //System.out.println("Generacija:"+c);
+            System.out.print("FF:" + kromosoms.get(0).getFf() + " [ ");
+            printKromosom( kromosoms.get(0).getNote());
+            System.out.println(" Gen:"+c);
+
 
             //Rekombinacija za 50% najboljih jedniki
             for(int i = 1; i < POPULACIJA/2; i = i + 2){
@@ -80,14 +82,6 @@ public class Main {
             removeDuplicates();
 
         }
-
-        kromosoms.sort(new Comp());
-
-        for(int i=0; i<kromosoms.size();i++){
-            System.out.print((kromosoms.get(kromosoms.size()-1-i).getFf()) + " ");
-            printKromosom(kromosoms.get(kromosoms.size()-1-i).getNote());
-        }
-        System.out.println("GENERACIJA: "+ c);
 
         Player player = new Player();
         //player.play("C D E F G A B");
@@ -106,9 +100,9 @@ public class Main {
 
     public static void printKromosom(char[]note){
         for(int i=0;i<note.length;i++){
-            System.out.print(note[i]);
+            System.out.print(note[i] + " ");
         }
-        System.out.println();
+        System.out.print("]");
 
     }
 
@@ -147,11 +141,9 @@ public class Main {
 
         if(calculateFF(d1)!=FIELD_SIZE){
             d1 = vrijednosnaMutacija(d1);
-            System.out.println("Mutacija");
         }
         if(calculateFF(d2)!=FIELD_SIZE){
             d2 = vrijednosnaMutacija(d2);
-            System.out.println("Mutacija");
         }
 
 
@@ -174,7 +166,6 @@ public class Main {
         char[] note = str.toCharArray();
         if(random.nextInt(100)<MUTATION_CHANCE) {
 
-            printKromosom(note);
             int prvi = random.nextInt(FIELD_SIZE - 1);
             int drugi = random.nextInt(FIELD_SIZE - 1);
             while(prvi==drugi){
@@ -188,7 +179,6 @@ public class Main {
 
             }
         }
-        printKromosom(note);
         return new String(note);
 
     }
@@ -197,12 +187,10 @@ public class Main {
         char[] note = str.toCharArray();
         int rand1 = random.nextInt(FIELD_SIZE-1);
         int rand2 = random.nextInt(FIELD_SIZE-1);
-        printKromosom(note);
         while(note[rand1] == sveNote[rand2]){
             rand2 = random.nextInt(FIELD_SIZE-1);
         }
         note[rand1] = sveNote[rand2];
-        printKromosom(note);
         return new String(note);
 
     }
