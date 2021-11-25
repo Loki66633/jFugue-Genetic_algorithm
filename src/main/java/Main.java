@@ -7,13 +7,13 @@ import java.util.stream.Collectors;
 
 public class Main {
 
-    static char[]trazeneNote = new char[]{'C','E','E','E','G','A','B'};
+    static char[]trazeneNote = new char[]{'C','E','E','E','G','A','B','A','C','G','A','C','E','E','G','A','D'};
 
     static final int FIELD_SIZE=trazeneNote.length;
     static final int EVOLUCJE=500;
-    static final int POPULACIJA=50 ;
-    static final int MUTATION_CHANCE=90;
-    static final int MAX_AGE=10;
+    static final int POPULACIJA=250;
+    static final int MUTATION_CHANCE=75;
+    static final int MAX_AGE=500;
 
 
     static final char[] sveNote = new char[]{'C','D','E','F','G','A','B'};
@@ -38,12 +38,6 @@ public class Main {
                 System.out.println("Riješenje nije nađeno!");
                 break;
             }
-            for (int i=0;i<kromosoms.size();i++){
-
-            }
-
-
-
 
             kromosoms.sort(new Comp());
 
@@ -53,8 +47,12 @@ public class Main {
                 System.out.print("[");
                 printKromosom(kromosoms.get(0).getNote());
                 System.out.println("\nFF:" + kromosoms.get(0).getFf());
-                System.exit(0);
+                Player player = new Player();
+                String rjesenje = new String(kromosoms.get(0).getNote());
+                player.play(rjesenje.replaceAll("\\B|\\b", " "));
+                break;
             }
+            removeDuplicates();
 
             //Makni kromosome koji su pre stari
             for (int i = 0; i < kromosoms.size(); i++) {
@@ -78,13 +76,18 @@ public class Main {
             //Rekombinacija za 50% najboljih jedniki
             for(int i = 1; i < POPULACIJA/2; i = i + 2){
                 rekombinacijaUJednojTocki(kromosoms.get(i-1),kromosoms.get(i));
+
             }
-            removeDuplicates();
+
+            //Kreiraj mutante, ostavi ih u listi ako su dobri
+            for(int i=0;i<POPULACIJA;i++){
+                permutacijskaMutacija(kromosoms.get(i));
+            }
+
 
         }
 
-        Player player = new Player();
-        //player.play("C D E F G A B");
+
     }
 
 
@@ -140,10 +143,10 @@ public class Main {
         String d2 = new String(poljeDijete2);
 
         if(calculateFF(d1)!=FIELD_SIZE){
-            d1 = vrijednosnaMutacija(d1);
+            d1 = vrijednosnaMutacijaDijeca(d1);
         }
         if(calculateFF(d2)!=FIELD_SIZE){
-            d2 = vrijednosnaMutacija(d2);
+            d2 = vrijednosnaMutacijaDijeca(d2);
         }
 
 
@@ -162,7 +165,7 @@ public class Main {
 
     }
 
-    public static String permutacijskaMutacija(String str){
+    public static String permutacijskaMutacijaDijeca(String str){
         char[] note = str.toCharArray();
         if(random.nextInt(100)<MUTATION_CHANCE) {
 
@@ -183,15 +186,37 @@ public class Main {
 
     }
 
-    public static String vrijednosnaMutacija(String str){
+    public static String vrijednosnaMutacijaDijeca(String str){
         char[] note = str.toCharArray();
-        int rand1 = random.nextInt(FIELD_SIZE-1);
-        int rand2 = random.nextInt(FIELD_SIZE-1);
+        int rand1 = random.nextInt(6);
+        int rand2 = random.nextInt(6);
         while(note[rand1] == sveNote[rand2]){
-            rand2 = random.nextInt(FIELD_SIZE-1);
+            rand2 = random.nextInt(6);
         }
         note[rand1] = sveNote[rand2];
         return new String(note);
+
+    }
+
+    public static void permutacijskaMutacija(Kromosom kromosom){
+        char[] note = kromosom.getNote();
+        if(random.nextInt(100)<MUTATION_CHANCE) {
+
+            int prvi = random.nextInt(FIELD_SIZE - 1);
+            int drugi = random.nextInt(FIELD_SIZE - 1);
+            while(prvi==drugi){
+                drugi=random.nextInt(FIELD_SIZE-1);
+            }
+
+            for (int i = 0; i < note.length; i++) {
+                char temp = note[prvi];
+                note[prvi] = note[drugi];
+                note[drugi] = temp;
+
+            }
+        }
+        String str = new String(note);
+        kromosoms.add(new Kromosom(str,note.length,calculateFF(str)));
 
     }
 
