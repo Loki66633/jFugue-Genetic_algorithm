@@ -7,13 +7,12 @@ import java.util.stream.Collectors;
 
 public class Main {
 
-    static char[]trazeneNote = new char[]{'C','E','E','E','G','A','B','A','C','G','A','C','E','E','G','A','D'};
-
+    static char[]trazeneNote = new char[]{'C','E','E','E','G','A','B','A','C','G','A','C','E','E','G','A','D','A','C','G','E','A'};
     static final int FIELD_SIZE=trazeneNote.length;
-    static final int EVOLUCJE=500;
+    static final int EVOLUCJE=1000;
     static final int POPULACIJA=250;
-    static final int MUTATION_CHANCE=75;
-    static final int MAX_AGE=500;
+    static final int MUTATION_CHANCE=25;
+    static final int MAX_AGE=200;
 
 
     static final char[] sveNote = new char[]{'C','D','E','F','G','A','B'};
@@ -57,7 +56,7 @@ public class Main {
             //Makni kromosome koji su pre stari
             for (int i = 0; i < kromosoms.size(); i++) {
                 kromosoms.get(i).age++;
-                if (kromosoms.get(i).age > MAX_AGE)
+                if (kromosoms.get(i).age > MAX_AGE )
                     kromosoms.remove(i);
             }
 
@@ -80,17 +79,15 @@ public class Main {
             }
 
             //Kreiraj mutante, ostavi ih u listi ako su dobri
-            for(int i=0;i<POPULACIJA;i++){
-                permutacijskaMutacija(kromosoms.get(i));
+            //Ostavi najboljih 5 rješenja
+            for(int i=POPULACIJA/20;i<POPULACIJA;i++){
+                vrijednosnaMutacija(kromosoms.get(i),i);
             }
 
 
         }
 
-
     }
-
-
 
 
     public static String popuniRand(){
@@ -175,12 +172,12 @@ public class Main {
                 drugi=random.nextInt(FIELD_SIZE-1);
             }
 
-            for (int i = 0; i < note.length; i++) {
-                char temp = note[prvi];
-                note[prvi] = note[drugi];
-                note[drugi] = temp;
 
-            }
+            char temp = note[prvi];
+            note[prvi] = note[drugi];
+            note[drugi] = temp;
+
+
         }
         return new String(note);
 
@@ -188,19 +185,23 @@ public class Main {
 
     public static String vrijednosnaMutacijaDijeca(String str){
         char[] note = str.toCharArray();
-        int rand1 = random.nextInt(6);
-        int rand2 = random.nextInt(6);
-        while(note[rand1] == sveNote[rand2]){
-            rand2 = random.nextInt(6);
+        if(random.nextInt(100)<MUTATION_CHANCE) {
+            int rand1 = random.nextInt(FIELD_SIZE-1);
+            int rand2 = random.nextInt(6);
+            while (note[rand1] == sveNote[rand2]) {
+                rand2 = random.nextInt(6);
+            }
+            note[rand1] = sveNote[rand2];
+
         }
-        note[rand1] = sveNote[rand2];
         return new String(note);
 
     }
 
-    public static void permutacijskaMutacija(Kromosom kromosom){
+    public static void permutacijskaMutacija(Kromosom kromosom, int index){
         char[] note = kromosom.getNote();
         if(random.nextInt(100)<MUTATION_CHANCE) {
+            kromosoms.remove(index);
 
             int prvi = random.nextInt(FIELD_SIZE - 1);
             int drugi = random.nextInt(FIELD_SIZE - 1);
@@ -208,15 +209,33 @@ public class Main {
                 drugi=random.nextInt(FIELD_SIZE-1);
             }
 
-            for (int i = 0; i < note.length; i++) {
-                char temp = note[prvi];
-                note[prvi] = note[drugi];
-                note[drugi] = temp;
+            char temp = note[prvi];
+            note[prvi] = note[drugi];
+            note[drugi] = temp;
 
-            }
+            String str = new String(note);
+            kromosoms.add(new Kromosom(str,note.length,calculateFF(str)));
         }
-        String str = new String(note);
-        kromosoms.add(new Kromosom(str,note.length,calculateFF(str)));
+
+
+    }
+
+    public static void vrijednosnaMutacija(Kromosom kromosom,int index){
+        char[] note = kromosom.getNote();
+        if(random.nextInt(100)<MUTATION_CHANCE) {
+
+            kromosoms.remove(index);
+            int rand1 = random.nextInt(FIELD_SIZE-1);
+            int rand2 = random.nextInt(6);
+            while (note[rand1] == sveNote[rand2]) {
+                rand2 = random.nextInt(6);
+            }
+            note[rand1] = sveNote[rand2];
+            String sta = new String(note);
+
+            kromosoms.add(new Kromosom(sta,sta.length(),calculateFF(sta)));
+        }
+
 
     }
 
